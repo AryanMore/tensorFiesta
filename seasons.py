@@ -29,17 +29,36 @@ mama_earth_data.loc[unknown_condition, 'SEASON'] = 'Unknown'
 # Print the count of reviews in each season
 season_counts = mama_earth_data['SEASON'].value_counts()
 
-s = 0
-w = 0
-r = 0
+product_s = 0
+product_w = 0
+product_r = 0
+
+category_s = 0
+category_w = 0
+category_r = 0
+
+##Adding all the product category season wise count in dictionaries
+
+trends_cat = dict()
+
+for c , k in zip(mama_earth_data['PRODUCT_CATEGORY'] , mama_earth_data['SEASON']):
+   if(c in trends_cat and k in trends_cat[c]):
+      trends_cat[c][k] += 1
+   else:
+      if(c in trends_cat):
+        trends_cat[c][k] = 1
+      else:
+         trends_cat[c] = dict()
+#print(trends_cat)
 
 for i , j in zip(mama_earth_data['SKU'] , mama_earth_data['SEASON']):
   if(i == '8906087770534'):
-    if(j == 'Winter'): w+=1
-    elif(j == 'Summer'): s+=1
-    elif(j == 'Monsoon'): r+=1
-total_sales_pp = w+s+r
-print("Winter Sales are {0} Summer Sales are {1} Monsoon Sales are {2}".format((w/total_sales_pp)*100 , (s/total_sales_pp)*100 , (r/total_sales_pp)*100))
+    if(j == 'Winter'): product_w+=1
+    elif(j == 'Summer'): product_s+=1
+    elif(j == 'Monsoon'): product_r+=1
+
+total_sales_pp = product_r+product_s+product_w
+print("Winter Sales are {0} Summer Sales are {1} Monsoon Sales are {2}".format((product_w/total_sales_pp)*100 , (product_s/total_sales_pp)*100 , (product_r/total_sales_pp)*100))
 
 
 #print(season_counts)
@@ -49,14 +68,20 @@ print("Winter Sales are {0} Summer Sales are {1} Monsoon Sales are {2}".format((
 
 # Step 2: Prepare your data (a dictionary in this case)
 my_data = {
-    "Winter": (w/total_sales_pp)*100,
-    "Summer": (s/total_sales_pp)*100,
-    "Monsoon": (r/total_sales_pp)*100,
+    "Winter": int((product_w/total_sales_pp)*100),
+    "Summer": int((product_s/total_sales_pp)*100),
+    "Monsoon": int((product_r/total_sales_pp)*100),
 }
 
-# Step 3: Open a file in write mode
-with open('trends.json', 'w') as json_file:
+# Creating JSON file for the display of trends of products wrt to seasons
+with open('C:/Users/Kamalkant More/Documents/TensorFiesta/horizon-tailwind-react/src/variables/trends.json', 'w') as json_file:
     # Step 4: Dump your data into the file
     json.dump(my_data, json_file)
 
-# Congratulations! You've just created a JSON file named 'my_file.json'.
+
+#Creating JSON file for the permenenat display of category data
+with open('C:/Users/Kamalkant More/Documents/TensorFiesta/horizon-tailwind-react/src/variables/trends_category.json', 'w') as json_file:
+    # Step 4: Dump your data into the file
+    json.dump(trends_cat, json_file)
+
+
